@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">AcquiringLibrary</string>
-    <string name="title_activity_lib">LibActivity</string>
+    <string name="title_activity_lib">Информация о платеже</string>
     <string name="txt_pay_amount">Сумма к оплате</string>
     <string name="txt_btn_get_otp">Получить код</string>
     <string name="hint_card_num">Номер карты</string>

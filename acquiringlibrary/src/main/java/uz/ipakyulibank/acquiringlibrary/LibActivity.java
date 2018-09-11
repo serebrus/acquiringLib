@@ -67,20 +67,25 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
 
         banks.put("14", "IPAK YO`LI BANKI");
         banks.put("03", "O`ZSANOATQURILISHBANK");
-        banks.put("06", "IPOTEKA BANK");
+        banks.put("33", "IPOTEKA BANK");
         banks.put("53", "Infin BANK");
         banks.put("56", "Hi-Tech Bank");
+        banks.put("06", "XALQ BANKI");
 
         Intent incom = getIntent();
-        app_key = incom.getStringExtra("app_key");
-        transactionID = incom.getStringExtra("transactionID");
-        amount = incom.getStringExtra("amount");
-        real_amount = Double.parseDouble(amount);
-        terminal_num = incom.getStringExtra("terminal_num");
-        lang = incom.getStringExtra("lang");
-        url_success = incom.getStringExtra("url_success");
-        url_fail = incom.getStringExtra("url_fail");
-        url_redirect = incom.getStringExtra("url_redirect");
+        if (incom.hasExtra("app_key") && incom.hasExtra("transactionID") && incom.hasExtra("amount")) {
+            app_key = incom.getStringExtra("app_key");
+            transactionID = incom.getStringExtra("transactionID");
+            amount = incom.getStringExtra("amount");
+            real_amount = Double.parseDouble(amount);
+            terminal_num = incom.getStringExtra("terminal_num");
+            lang = incom.getStringExtra("lang");
+            url_success = incom.getStringExtra("url_success");
+            url_fail = incom.getStringExtra("url_fail");
+            url_redirect = incom.getStringExtra("url_redirect");
+        } else {
+            closeWnd(Activity.RESULT_CANCELED, "1");
+        }
 
         new DownloadImageTask((ImageView) findViewById(R.id.imgLogo)).execute(logo_url + app_key + ".png");
 
@@ -315,16 +320,18 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
     @Override
     public void sendDataToServer(AsyncResponse delegate, String sURL, HashMap<String, String> params) {
         ConnectivityManager conMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        if ( conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
-                || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED ) {
-            // notify user you are online
-            PostResponseAsyncTask getOTPTask = new PostResponseAsyncTask(delegate, params);
-            getOTPTask.execute(sURL);
-        }
-        else if ( conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
-                || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
-            // notify user you are not online
-            Toast.makeText(this, "Проверьте подключение к интернету " , Toast.LENGTH_LONG).show();
+        if (conMgr != null) {
+            if ( conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
+                    || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED ) {
+                // notify user you are online
+                PostResponseAsyncTask getOTPTask = new PostResponseAsyncTask(delegate, params);
+                getOTPTask.execute(sURL);
+            }
+            else if ( conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
+                    || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
+                // notify user you are not online
+                Toast.makeText(this, "Проверьте подключение к интернету " , Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -382,7 +389,7 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
         intent.putExtra("result", data);
         setResult(resultCode, intent);
         finish();
-        return;
+
         /*
         Class cl = getParent().getClass();
         Intent intent = new Intent(LibActivity.this, cl);
