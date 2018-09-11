@@ -83,11 +83,11 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
             url_success = incom.getStringExtra("url_success");
             url_fail = incom.getStringExtra("url_fail");
             url_redirect = incom.getStringExtra("url_redirect");
+
+            new DownloadImageTask((ImageView) findViewById(R.id.imgLogo)).execute(logo_url + app_key + ".png");
         } else {
             closeWnd(Activity.RESULT_CANCELED, "1");
         }
-
-        new DownloadImageTask((ImageView) findViewById(R.id.imgLogo)).execute(logo_url + app_key + ".png");
 
         TextView tv = findViewById(R.id.textView);
         String pre_num = NumberFormat.getCurrencyInstance().format((real_amount/100));
