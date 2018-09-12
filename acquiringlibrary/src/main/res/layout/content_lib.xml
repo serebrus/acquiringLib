@@ -154,4 +154,16 @@
         android:layout_marginBottom="68dp"
         app:srcCompat="@android:drawable/btn_star_big_on"
         android:contentDescription="@string/title_activity_lib"/>
+
+    <TextView
+        android:id="@+id/idauthor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginRight="4dp"
+        android:gravity="right"
+        android:text="@string/authname"
+        android:textSize="10sp" />
 </RelativeLayout>
