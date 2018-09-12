@@ -50,6 +50,7 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
 
     protected boolean flgForExit_ptp = false;
     protected HashMap<String, String> banks = new HashMap<>();
+    protected HashMap<String, Integer> banks_logo = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +72,11 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
         banks.put("53", "Infin BANK");
         banks.put("56", "Hi-Tech Bank");
         banks.put("06", "XALQ BANKI");
+
+        banks_logo.put("14", R.drawable.b14);
+        banks_logo.put("03", R.drawable.b03);
+        banks_logo.put("33", R.drawable.b33);
+        banks_logo.put("56", R.drawable.b56);
 
         Intent incom = getIntent();
         if (incom.hasExtra("app_key") && incom.hasExtra("transactionID") && incom.hasExtra("amount")) {
@@ -164,9 +170,9 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
                         cn.setSelection(editable.toString().length() + 1);
                     } else if (editable.toString().length() == 7) {
                         String part = editable.toString().substring(editable.toString().lastIndexOf(" ") + 1);
-                        if (banks.containsKey(part)) {
-                            TextView bank_name = findViewById(R.id.idBankName);
-                            bank_name.setText(banks.get(part));
+                        if (banks_logo.containsKey(part)) {
+                            ImageView bank_logo = findViewById(R.id.idBankLogo);
+                            bank_logo.setImageResource(banks_logo.get(part));
                         }
                     }
                 }
