@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import uz.ipakyulibank.acquiringlibrary.LibActivity;
 
@@ -48,5 +49,15 @@ public class FirstActivity extends AppCompatActivity {
                 startActivity(data);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        /*
+        if (requestCode == SUCCESS) {
+            if (resultCode == RESULT_OK) {}
+        }
+        */
+        Toast.makeText(this, "Ответ: " + resultCode, Toast.LENGTH_LONG).show();
     }
 }
