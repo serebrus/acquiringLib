@@ -291,8 +291,12 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
                 sc.setVisibility(View.VISIBLE);
 
                 if (resp.length > 2 && resp[2]!=null) {
-                    genID = resp[2];
-                    //Toast.makeText(this, "ID: " + genID , Toast.LENGTH_LONG).show();
+                    TextView card_fio = findViewById(R.id.card_fio);
+                    card_fio.setText(resp[2]);
+                }
+
+                if (resp.length > 3 && resp[3]!=null) {
+                    genID = resp[3];
                 }
 
                 getSecCodeBySMS();
