@@ -85,135 +85,164 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
             url_redirect = incom.getStringExtra("url_redirect");
 
             new DownloadImageTask((ImageView) findViewById(R.id.imgLogo)).execute(logo_url + app_key + ".png");
-        } else {
-            closeWnd(Activity.RESULT_CANCELED, "1");
-        }
 
-        TextView tv = findViewById(R.id.textView);
-        String pre_num = NumberFormat.getCurrencyInstance().format((real_amount/100));
-        String num = pre_num.replaceAll("[а-яёА-ЯЁ]+\\.", "Сум");
-        tv.setText(num);
+            TextView tv = findViewById(R.id.textView);
+            String pre_num = NumberFormat.getCurrencyInstance().format((real_amount/100));
+            String num = pre_num.replaceAll("[а-яёА-ЯЁ]+\\.", "Сум");
+            tv.setText(num);
 
-        Calendar today = Calendar.getInstance();
-        final MonthPickerDialog.Builder builder = new MonthPickerDialog.Builder(LibActivity.this, new MonthPickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(int selectedMonth, int selectedYear) {
+            Calendar today = Calendar.getInstance();
+            final MonthPickerDialog.Builder builder = new MonthPickerDialog.Builder(LibActivity.this, new MonthPickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(int selectedMonth, int selectedYear) {
 
-            }
-        }, today.get(Calendar.YEAR), today.get(Calendar.MONTH));
-        builder.setActivatedMonth(Calendar.JULY)
-                .setMinYear(1990)
-                .setActivatedYear(2017)
-                .setMaxYear(2030)
-                .setMinMonth(Calendar.FEBRUARY)
-                .setTitle("Срок карты")
-                .setMonthRange(Calendar.FEBRUARY, Calendar.NOVEMBER)
-                // .setMaxMonth(Calendar.OCTOBER)
-                // .setYearRange(1890, 1890)
-                // .setMonthAndYearRange(Calendar.FEBRUARY, Calendar.OCTOBER, 1890, 1890)
-                //.showMonthOnly()
-                // .showYearOnly()
-                .setOnMonthChangedListener(new MonthPickerDialog.OnMonthChangedListener() {
-                    @Override
-                    public void onMonthChanged(int selectedMonth) {
-                        int m = selectedMonth + 1;
-                        c_m[0] = m < 10 ? "0" + m : m + "";
-                        card_data[0] = c_y[0] + "/" + c_m[0];
-                        ce.setText(card_data[0]);
-                    }
-                })
-                .setOnYearChangedListener(new MonthPickerDialog.OnYearChangedListener() {
-                    @Override
-                    public void onYearChanged(int selectedYear) {
-                        if (selectedYear >= 2000) {
-                            c_y[0] = selectedYear - 2000;
-                        } else {
-                            c_y[0] = selectedYear - 1900;
+                }
+            }, today.get(Calendar.YEAR), today.get(Calendar.MONTH));
+            builder.setActivatedMonth(Calendar.JULY)
+                    .setMinYear(1990)
+                    .setActivatedYear(2017)
+                    .setMaxYear(2030)
+                    .setMinMonth(Calendar.FEBRUARY)
+                    .setTitle("Срок карты")
+                    .setMonthRange(Calendar.FEBRUARY, Calendar.NOVEMBER)
+                    // .setMaxMonth(Calendar.OCTOBER)
+                    // .setYearRange(1890, 1890)
+                    // .setMonthAndYearRange(Calendar.FEBRUARY, Calendar.OCTOBER, 1890, 1890)
+                    //.showMonthOnly()
+                    // .showYearOnly()
+                    .setOnMonthChangedListener(new MonthPickerDialog.OnMonthChangedListener() {
+                        @Override
+                        public void onMonthChanged(int selectedMonth) {
+                            int m = selectedMonth + 1;
+                            c_m[0] = m < 10 ? "0" + m : m + "";
+                            card_data[0] = c_y[0] + "/" + c_m[0];
+                            ce.setText(card_data[0]);
                         }
-                        card_data[0] = c_y[0] + "/" + c_m[0];
-                        ce.setText(card_data[0]);
-                    }
-                })
+                    })
+                    .setOnYearChangedListener(new MonthPickerDialog.OnYearChangedListener() {
+                        @Override
+                        public void onYearChanged(int selectedYear) {
+                            if (selectedYear >= 2000) {
+                                c_y[0] = selectedYear - 2000;
+                            } else {
+                                c_y[0] = selectedYear - 1900;
+                            }
+                            card_data[0] = c_y[0] + "/" + c_m[0];
+                            ce.setText(card_data[0]);
+                        }
+                    })
                 /*.build()
                 .show()*/;
 
-        final EditText cn = findViewById(R.id.card_num);
-        cn.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            final EditText cn = findViewById(R.id.card_num);
+            cn.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String txt = cn.getText().toString();
-                if (txt.trim().length() == 19) {
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        imm.hideSoftInputFromWindow(cn.getWindowToken(), 0);
-                    }
-
-                    builder.build().show();
                 }
 
-                if (editable.toString().length() == 4 || editable.toString().length() == 9 || editable.toString().length() == 14) {
-                    String new_cn = editable.toString() + " ";
-                    cn.setText(new_cn);
-                    cn.setSelection(editable.toString().length() + 1);
-                } else if (editable.toString().length() == 7) {
-                    String part = editable.toString().substring(editable.toString().lastIndexOf(" ") + 1);
-                    if (banks.containsKey(part)) {
-                        TextView bank_name = findViewById(R.id.idBankName);
-                        bank_name.setText(banks.get(part));
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    String txt = cn.getText().toString();
+                    if (txt.trim().length() == 19) {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        if (imm != null) {
+                            imm.hideSoftInputFromWindow(cn.getWindowToken(), 0);
+                        }
+
+                        builder.build().show();
+                    }
+
+                    if (editable.toString().length() == 4 || editable.toString().length() == 9 || editable.toString().length() == 14) {
+                        String new_cn = editable.toString() + " ";
+                        cn.setText(new_cn);
+                        cn.setSelection(editable.toString().length() + 1);
+                    } else if (editable.toString().length() == 7) {
+                        String part = editable.toString().substring(editable.toString().lastIndexOf(" ") + 1);
+                        if (banks.containsKey(part)) {
+                            TextView bank_name = findViewById(R.id.idBankName);
+                            bank_name.setText(banks.get(part));
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        ce.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            ce.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
+                }
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
+                }
 
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String txt = ce.getText().toString();
-                if (txt.trim().length() == 6) {
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        imm.hideSoftInputFromWindow(ce.getWindowToken(), 0);
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    String txt = ce.getText().toString();
+                    if (txt.trim().length() == 6) {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        if (imm != null) {
+                            imm.hideSoftInputFromWindow(ce.getWindowToken(), 0);
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        btn = findViewById(R.id.btn_get_otp);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (cn.getText().toString().length() == 19) {
-                    String iv = random();
-                    String SecretKey = random();
-                    try {
-                        String plainText = cn.getText().toString() + ":" + ce.getText().toString();
-                        MCrypt _crypt = new MCrypt(iv, SecretKey);
-                        String encrypted = MCrypt.bytesToHex(_crypt.encrypt(plainText));
-                        String decrypted = new String(_crypt.decrypt(encrypted));
-                        //Toast.makeText(slf, " Ключ: " + iv, Toast.LENGTH_LONG).show();
+            btn = findViewById(R.id.btn_get_otp);
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (cn.getText().toString().length() == 19) {
+                        String iv = random();
+                        String SecretKey = random();
+                        try {
+                            String plainText = cn.getText().toString() + ":" + ce.getText().toString();
+                            MCrypt _crypt = new MCrypt(iv, SecretKey);
+                            String encrypted = MCrypt.bytesToHex(_crypt.encrypt(plainText));
+                            String decrypted = new String(_crypt.decrypt(encrypted));
+                            //Toast.makeText(slf, " Ключ: " + iv, Toast.LENGTH_LONG).show();
 
+                            HashMap<String, String> postData = new HashMap<>();
+                            postData.put("step", "card_info");
+                            postData.put("app_key", app_key);
+                            postData.put("transactionID", transactionID);
+                            postData.put("amount", amount);
+                            postData.put("terminal_num", terminal_num);
+                            postData.put("lang", lang);
+                            postData.put("url_redirect", url_redirect);
+                            postData.put("url_success", url_success);
+                            postData.put("url_fail", url_fail);
+                            postData.put("iv", iv + "");
+                            postData.put("sec_key", SecretKey);
+                            postData.put("card_data", encrypted + "");
+
+                            sendDataToServer(LibActivity.this, server_url, postData);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(slf, "Введите номер карты " , Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+
+            btn_pay = findViewById(R.id.btn_pay);
+            btn_pay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sc = findViewById(R.id.sec_code);
+                    String sec_code = sc.getText().toString();
+                    if (sec_code.length() == 6) {
+                        btn_pay.setEnabled(false);
                         HashMap<String, String> postData = new HashMap<>();
-                        postData.put("step", "card_info");
+                        postData.put("step", "pay");
                         postData.put("app_key", app_key);
                         postData.put("transactionID", transactionID);
                         postData.put("amount", amount);
@@ -222,47 +251,18 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
                         postData.put("url_redirect", url_redirect);
                         postData.put("url_success", url_success);
                         postData.put("url_fail", url_fail);
-                        postData.put("iv", iv + "");
-                        postData.put("sec_key", SecretKey);
-                        postData.put("card_data", encrypted + "");
+                        postData.put("sec_code", sec_code);
+                        postData.put("genID", genID);
 
                         sendDataToServer(LibActivity.this, server_url, postData);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } else {
+                        Toast.makeText(slf, "Введите код операции корректно" , Toast.LENGTH_LONG).show();
                     }
-                } else {
-                    Toast.makeText(slf, "Введите номер карты " , Toast.LENGTH_LONG).show();
                 }
-            }
-        });
-
-        btn_pay = findViewById(R.id.btn_pay);
-        btn_pay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sc = findViewById(R.id.sec_code);
-                String sec_code = sc.getText().toString();
-                if (sec_code.length() == 6) {
-                    btn_pay.setEnabled(false);
-                    HashMap<String, String> postData = new HashMap<>();
-                    postData.put("step", "pay");
-                    postData.put("app_key", app_key);
-                    postData.put("transactionID", transactionID);
-                    postData.put("amount", amount);
-                    postData.put("terminal_num", terminal_num);
-                    postData.put("lang", lang);
-                    postData.put("url_redirect", url_redirect);
-                    postData.put("url_success", url_success);
-                    postData.put("url_fail", url_fail);
-                    postData.put("sec_code", sec_code);
-                    postData.put("genID", genID);
-
-                    sendDataToServer(LibActivity.this, server_url, postData);
-                } else {
-                    Toast.makeText(slf, "Введите код операции корректно" , Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+            });
+        } else {
+            closeWnd(Activity.RESULT_CANCELED, "1");
+        }
     }
 
     @Override

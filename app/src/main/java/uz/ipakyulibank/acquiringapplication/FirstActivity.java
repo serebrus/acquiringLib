@@ -37,7 +37,7 @@ public class FirstActivity extends AppCompatActivity {
                 amount = txt.getText().toString();
 
                 Intent data = new Intent(slf, LibActivity.class);
-                data.putExtra("app_key", app_key);
+                //data.putExtra("app_key", app_key);
                 data.putExtra("transactionID", transactionID);
                 data.putExtra("amount", amount);
                 data.putExtra("terminal_num", terminal_num);
