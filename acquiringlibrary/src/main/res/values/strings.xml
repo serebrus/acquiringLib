@@ -7,4 +7,5 @@
     <string name="hint_card_exp">Срок</string>
     <string name="hint_sec_code">Код операции</string>
     <string name="txt_btn_pay">Оплатить</string>
+    <string name="tv1">TextView</string>
 </resources>
