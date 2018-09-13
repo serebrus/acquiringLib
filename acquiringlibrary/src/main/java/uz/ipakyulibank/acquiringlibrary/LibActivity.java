@@ -60,7 +60,6 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
         setSupportActionBar(toolbar);
 
         slf = this;
-
         final String[] card_data = new String[1];
         final String[] c_m = new String[1];
         final int[] c_y = new int[1];
