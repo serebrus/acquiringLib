@@ -267,6 +267,7 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
                 }
             });
         } else {
+            Toast.makeText(slf, "Необходимые параметры не указаны" , Toast.LENGTH_LONG).show();
             closeWnd(Activity.RESULT_CANCELED, "1");
         }
     }

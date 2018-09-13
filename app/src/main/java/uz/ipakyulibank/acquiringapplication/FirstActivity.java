@@ -58,6 +58,6 @@ public class FirstActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {}
         }
         */
-        Toast.makeText(this, "Ответ: " + resultCode, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Ответ: " + resultCode + data.getStringExtra("result"), Toast.LENGTH_LONG).show();
     }
 }
