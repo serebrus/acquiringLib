@@ -13,8 +13,8 @@ import uz.ipakyulibank.acquiringlibrary.LibActivity;
 public class FirstActivity extends AppCompatActivity {
     protected FirstActivity slf;
 
-    protected String app_key = "07WR12DS01FP24SD70FD24SD54SD01UF";
-    protected String transactionID = "7707";
+    protected String app_key = "00HA45EH59GF66VR50UK61ER10KY32DF";
+    protected String transactionID = "77072";
     protected String amount;
     protected String terminal_num = "1";
     protected String lang = "ru";
