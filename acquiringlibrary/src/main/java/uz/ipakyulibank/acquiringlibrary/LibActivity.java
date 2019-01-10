@@ -303,7 +303,6 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
 
                 if (resp.length > 4 && resp[4]!=null) {
                     sessionName = resp[4];
-                    Toast.makeText(this, sessionName , Toast.LENGTH_LONG).show();
                 }
 
                 getSecCodeBySMS();
