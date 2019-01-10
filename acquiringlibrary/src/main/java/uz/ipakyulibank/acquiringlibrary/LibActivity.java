@@ -32,6 +32,7 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
     protected String logo_url = server_url + "logos/";
 
     protected String genID;
+    protected String sessionName;
     protected String app_key;
     protected String transactionID;
     protected String amount;
@@ -258,6 +259,7 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
                         postData.put("url_fail", url_fail);
                         postData.put("sec_code", sec_code);
                         postData.put("genID", genID);
+                        postData.put("sessionName", sessionName);
 
                         sendDataToServer(LibActivity.this, server_url, postData);
                     } else {
@@ -297,6 +299,11 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
 
                 if (resp.length > 3 && resp[3]!=null) {
                     genID = resp[3];
+                }
+
+                if (resp.length > 4 && resp[4]!=null) {
+                    sessionName = resp[4];
+                    Toast.makeText(this, sessionName , Toast.LENGTH_LONG).show();
                 }
 
                 getSecCodeBySMS();
