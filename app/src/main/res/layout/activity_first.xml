@@ -33,4 +33,17 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="95dp"
         android:text="@string/btn_text" />
+
+    <EditText
+        android:id="@+id/transactionID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/id_num"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="164dp"
+        android:layout_marginRight="16dp"
+        android:ems="10"
+        android:inputType="number"
+        android:text="@string/transactionID_text"
+        android:layout_alignLeft="@+id/id_num" />
 </RelativeLayout>
