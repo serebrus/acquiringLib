@@ -3,6 +3,7 @@ package uz.ipakyulibank.acquiringlibrary;
 /**
  * Created by adminn on 21.01.2016.
  */
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -27,9 +28,10 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
     private ProgressDialog progressDialog;
 
     private AsyncResponse delegate;
+    @SuppressLint("StaticFieldLeak")
     private Context context;
     private HashMap<String, String> postData =
-            new HashMap<String, String>();
+            new HashMap<>();
     private String loadingMessage = "Загрузка...";
 
     //Constructor
@@ -38,8 +40,8 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
         this.context = (Context)delegate;
     }
 
-    public PostResponseAsyncTask(AsyncResponse delegate,
-                                 HashMap<String, String> postData) {
+    PostResponseAsyncTask(AsyncResponse delegate,
+                          HashMap<String, String> postData) {
 
         this.delegate = delegate;
         this.context = (Context)delegate;
@@ -66,6 +68,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
     protected void onPreExecute() {
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage(loadingMessage);
+        progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
         super.onPreExecute();
     }//onPreExecute
@@ -127,7 +130,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
                 }
             }
             else {
-                response="";
+                //response="";
 
                 Log.i("PostResponseAsyncTask", responseCode + "");
             }
