@@ -19,9 +19,9 @@ public class FirstActivity extends AppCompatActivity {
     protected String amount;
     protected String terminal_num = "1";
     protected String lang = "ru";
-    protected String url_success = "http://apteka.getmuzon.com/api/web/v1/payments/success/67";
-    protected String url_fail = "http://apteka.getmuzon.com/api/web/v1/payments/fail/67";
-    protected String url_redirect = "http://apteka-express.uz";
+    protected String url_success = "https://wi.ipakyulibank.uz/acquiring/hJaAGAA/Uz5QszX1kA9J6C6A7UtYScICvmVZ/mobile/success.php";
+    protected String url_fail = "https://wi.ipakyulibank.uz/acquiring/hJaAGAA/Uz5QszX1kA9J6C6A7UtYScICvmVZ/mobile/fail.php";
+    protected String url_redirect = "https://wi.ipakyulibank.uz";
 
 
     @Override
