@@ -247,7 +247,8 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
                             String plainText = cn.getText().toString() + ":" + ce.getText().toString();
                             MCrypt _crypt = new MCrypt(iv, SecretKey);
                             String encrypted = MCrypt.bytesToHex(_crypt.encrypt(plainText));
-                            String decrypted = new String(_crypt.decrypt(encrypted));
+
+                            //Toast.makeText(slf, "card_data (" + cn + " " + ce + "): " + encrypted, Toast.LENGTH_LONG).show();
                             //Toast.makeText(slf, " Ключ: " + iv, Toast.LENGTH_LONG).show();
 
                             HashMap<String, String> postData = new HashMap<>();
@@ -263,6 +264,9 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
                             postData.put("iv", iv + "");
                             postData.put("sec_key", SecretKey);
                             postData.put("card_data", encrypted + "");
+                            if (genID.length() > 0) {
+                                postData.put("genID", genID);
+                            }
 
                             sendDataToServer(LibActivity.this, server_url, postData, true);
                         } catch (Exception e) {
@@ -293,8 +297,8 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
                         postData.put("url_success", url_success);
                         postData.put("url_fail", url_fail);
                         postData.put("sec_code", sec_code);
-                        postData.put("genID", genID);
                         postData.put("sessionName", sessionName);
+                        postData.put("genID", genID);
 
                         sendDataToServer(LibActivity.this, server_url, postData, true);
                     } else {
@@ -349,6 +353,7 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
         switch (resp[0]) {
             case "cardList":
                 if (!resp[2].equals("emp")) {
+                    genID = resp[3];
                     resp[2] = "Номер карты###" + resp[2];
                     String[] cards = resp[2].split("#{3}");
                     final Spinner spinner = findViewById(R.id.spinner2);

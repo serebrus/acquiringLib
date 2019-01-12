@@ -2,5 +2,5 @@
     <string name="app_name">AcquiringApplication</string>
     <string name="edit_hint">Целое число</string>
     <string name="btn_text">Оплатить</string>
-    <string name="transactionID_text">17121</string>
+    <string name="transactionID_text">17125</string>
 </resources>
