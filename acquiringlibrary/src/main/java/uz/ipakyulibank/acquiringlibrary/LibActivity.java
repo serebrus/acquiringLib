@@ -1,5 +1,7 @@
 package uz.ipakyulibank.acquiringlibrary;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -13,9 +15,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +47,7 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
     protected String url_success;
     protected String url_fail;
     protected String url_redirect;
+    protected String user_id = "emp_user";
 
     protected static int MAX_LENGTH = 16;
     protected boolean goBack = true;
@@ -53,12 +59,23 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
     protected HashMap<String, String> banks = new HashMap<>();
     protected HashMap<String, Integer> banks_logo = new HashMap<>();
 
+    private AnimatorSet mSetRightOut;
+    private AnimatorSet mSetLeftIn;
+    private boolean mIsBackVisible = false;
+    private View mCardFrontLayout;
+    private View mCardBackLayout;
+    private boolean isCardEntered = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lib);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        findViews();
+        loadAnimations();
+        changeCameraDistance();
 
         slf = this;
         final String[] card_data = new String[1];
@@ -91,6 +108,25 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
             url_redirect = incom.getStringExtra("url_redirect");
 
             new DownloadImageTask((ImageView) findViewById(R.id.imgLogo)).execute(logo_url + app_key + ".png");
+
+            if (incom.hasExtra("user_id")) {
+                user_id = incom.getStringExtra("user_id");
+
+                HashMap<String, String> postData = new HashMap<>();
+                postData.put("step", "check_user_cards");
+                postData.put("app_key", app_key);
+                postData.put("transactionID", transactionID);
+                //postData.put("transactionID", "17120");
+                postData.put("amount", amount);
+                postData.put("terminal_num", terminal_num);
+                postData.put("lang", lang);
+                postData.put("url_redirect", url_redirect);
+                postData.put("url_success", url_success);
+                postData.put("url_fail", url_fail);
+                postData.put("user_id", user_id);
+
+                sendDataToServer(LibActivity.this, server_url, postData, false);
+            }
 
             TextView tv = findViewById(R.id.textView);
             String pre_num = NumberFormat.getCurrencyInstance().format((real_amount/100));
@@ -136,9 +172,7 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
                             card_data[0] = c_y[0] + "/" + c_m[0];
                             ce.setText(card_data[0]);
                         }
-                    })
-                /*.build()
-                .show()*/;
+                    });
 
             final EditText cn = findViewById(R.id.card_num);
             cn.addTextChangedListener(new TextWatcher() {
@@ -160,8 +194,9 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
                         if (imm != null) {
                             imm.hideSoftInputFromWindow(cn.getWindowToken(), 0);
                         }
-
-                        builder.build().show();
+                        if (isCardEntered) {
+                            builder.build().show();
+                        }
                     }
 
                     if (editable.toString().length() == 4 || editable.toString().length() == 9 || editable.toString().length() == 14) {
@@ -229,7 +264,7 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
                             postData.put("sec_key", SecretKey);
                             postData.put("card_data", encrypted + "");
 
-                            sendDataToServer(LibActivity.this, server_url, postData);
+                            sendDataToServer(LibActivity.this, server_url, postData, true);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -261,15 +296,50 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
                         postData.put("genID", genID);
                         postData.put("sessionName", sessionName);
 
-                        sendDataToServer(LibActivity.this, server_url, postData);
+                        sendDataToServer(LibActivity.this, server_url, postData, true);
                     } else {
                         Toast.makeText(slf, "Введите код операции корректно" , Toast.LENGTH_LONG).show();
                     }
                 }
             });
+
         } else {
             Toast.makeText(slf, "Необходимые параметры не указаны" , Toast.LENGTH_LONG).show();
             closeWnd(Activity.RESULT_CANCELED, "1");
+        }
+    }
+
+    private void changeCameraDistance() {
+        int distance = 8000;
+        float scale = getResources().getDisplayMetrics().density * distance;
+        mCardFrontLayout.setCameraDistance(scale);
+        mCardBackLayout.setCameraDistance(scale);
+    }
+
+    private void loadAnimations() {
+        mSetRightOut = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.out_animation);
+        mSetLeftIn = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.in_animation);
+    }
+
+    private void findViews() {
+        mCardBackLayout = findViewById(R.id.card_back);
+        mCardFrontLayout = findViewById(R.id.card_front);
+    }
+
+    public void flipCard(View view) {
+        if (!mIsBackVisible) {
+            mSetRightOut.setTarget(mCardFrontLayout);
+            mSetLeftIn.setTarget(mCardBackLayout);
+            mSetRightOut.start();
+            mSetLeftIn.start();
+            mIsBackVisible = true;
+        } else {
+            isCardEntered = true;
+            mSetRightOut.setTarget(mCardBackLayout);
+            mSetLeftIn.setTarget(mCardFrontLayout);
+            mSetRightOut.start();
+            mSetLeftIn.start();
+            mIsBackVisible = false;
         }
     }
 
@@ -277,6 +347,38 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
     public void processFinish(String output) {
         String[] resp = output.split(":{3}");
         switch (resp[0]) {
+            case "cardList":
+                if (!resp[2].equals("emp")) {
+                    resp[2] = "Номер карты###" + resp[2];
+                    String[] cards = resp[2].split("#{3}");
+                    final Spinner spinner = findViewById(R.id.spinner2);
+                    ArrayAdapter<CharSequence> langAdapter = new ArrayAdapter<CharSequence>(slf, R.layout.spinner_text, cards);
+                    langAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown);
+                    spinner.setAdapter(langAdapter);
+                    spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                            if (!spinner.getSelectedItem().toString().equals("Номер карты")) {
+                                String selected_card = spinner.getSelectedItem().toString();
+                                String[] selected_card_parts = selected_card.split(" - ");
+                                EditText cn = findViewById(R.id.card_num);
+                                cn.setText(selected_card_parts[0]);
+
+                                EditText ce = findViewById(R.id.card_exp);
+                                ce.setText(selected_card_parts[1]);
+
+                                isCardEntered = false;
+                            }
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> adapterView) {
+
+                        }
+                    });
+                    flipCard(findViewById(R.id.mainWnd));
+                }
+                break;
             case "sys":
                 break;
             case "error":
@@ -334,13 +436,13 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
     }
 
     @Override
-    public void sendDataToServer(AsyncResponse delegate, String sURL, HashMap<String, String> params) {
+    public void sendDataToServer(AsyncResponse delegate, String sURL, HashMap<String, String> params, Boolean sw) {
         ConnectivityManager conMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
         if (conMgr != null) {
             if ( conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
                     || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED ) {
                 // notify user you are online
-                PostResponseAsyncTask getOTPTask = new PostResponseAsyncTask(delegate, params);
+                PostResponseAsyncTask getOTPTask = new PostResponseAsyncTask(delegate, params, sw);
                 getOTPTask.execute(sURL);
             }
             else if ( conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED

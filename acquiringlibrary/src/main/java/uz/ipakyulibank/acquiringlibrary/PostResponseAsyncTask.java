@@ -33,6 +33,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
     private HashMap<String, String> postData =
             new HashMap<>();
     private String loadingMessage = "Загрузка...";
+    private Boolean sw;
 
     //Constructor
     public PostResponseAsyncTask(AsyncResponse delegate){
@@ -41,11 +42,12 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
     }
 
     PostResponseAsyncTask(AsyncResponse delegate,
-                          HashMap<String, String> postData) {
+                          HashMap<String, String> postData, Boolean sw) {
 
         this.delegate = delegate;
         this.context = (Context)delegate;
         this.postData = postData;
+        this.sw = sw;
     }
 
     public PostResponseAsyncTask(AsyncResponse delegate, String loadingMessage) {
@@ -69,7 +71,9 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage(loadingMessage);
         progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
+        if (this.sw) {
+            progressDialog.show();
+        }
         super.onPreExecute();
     }//onPreExecute
 

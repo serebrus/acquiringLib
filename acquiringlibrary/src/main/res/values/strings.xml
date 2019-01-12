@@ -9,4 +9,6 @@
     <string name="txt_btn_pay">Оплатить</string>
     <string name="tv1">TextView</string>
     <string name="authname">Powered by Ipak Yuli Bank</string>
+
+    <string name="back">BACK</string>
 </resources>

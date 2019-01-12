@@ -22,7 +22,7 @@ public class FirstActivity extends AppCompatActivity {
     protected String url_success = "https://wi.ipakyulibank.uz/acquiring/hJaAGAA/Uz5QszX1kA9J6C6A7UtYScICvmVZ/mobile/success.php";
     protected String url_fail = "https://wi.ipakyulibank.uz/acquiring/hJaAGAA/Uz5QszX1kA9J6C6A7UtYScICvmVZ/mobile/fail.php";
     protected String url_redirect = "https://wi.ipakyulibank.uz";
-
+    protected String user_id = "hasan_wi";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +50,8 @@ public class FirstActivity extends AppCompatActivity {
                 data.putExtra("url_success", url_success);
                 data.putExtra("url_fail", url_fail);
                 data.putExtra("url_redirect", url_redirect);
+                data.putExtra("user_id", user_id);
+
                 startActivity(data);
             }
         });
