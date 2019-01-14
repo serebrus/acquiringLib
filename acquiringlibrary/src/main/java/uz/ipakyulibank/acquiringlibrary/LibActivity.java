@@ -36,7 +36,7 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
     protected String server_url = "https://wi.ipakyulibank.uz/acquiring/hJaAGAA/Uz5QszX1kA9J6C6A7UtYScICvmVZ/mobile/";
     protected String logo_url = server_url + "logos/";
 
-    protected String genID;
+    protected String genID = "";
     protected String sessionName;
     protected String app_key;
     protected String transactionID;
@@ -47,7 +47,7 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
     protected String url_success;
     protected String url_fail;
     protected String url_redirect;
-    protected String user_id = "emp_user";
+    protected String user_id = "_not_registered_";
 
     protected static int MAX_LENGTH = 16;
     protected boolean goBack = true;
@@ -64,7 +64,8 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
     private boolean mIsBackVisible = false;
     private View mCardFrontLayout;
     private View mCardBackLayout;
-    private boolean isCardEntered = true;
+    private Boolean isDelete;
+    private Boolean isCardListLoaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +124,9 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
                 postData.put("url_redirect", url_redirect);
                 postData.put("url_success", url_success);
                 postData.put("url_fail", url_fail);
-                postData.put("user_id", user_id);
+                if(user_id.length() > 0 && !user_id.equals("_not_registered_")) {
+                    postData.put("user_id", user_id);
+                }
 
                 sendDataToServer(LibActivity.this, server_url, postData, false);
             }
@@ -183,27 +186,45 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                    isDelete = i1 != 0;
                 }
 
                 @Override
                 public void afterTextChanged(Editable editable) {
-                    String txt = cn.getText().toString();
-                    if (txt.trim().length() == 19) {
+                    if (editable.toString().trim().length() == 19) {
                         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                         if (imm != null) {
                             imm.hideSoftInputFromWindow(cn.getWindowToken(), 0);
                         }
-                        if (isCardEntered) {
+                        if (!mIsBackVisible) {
                             builder.build().show();
                         }
                     }
 
-                    if (editable.toString().length() == 4 || editable.toString().length() == 9 || editable.toString().length() == 14) {
-                        String new_cn = editable.toString() + " ";
-                        cn.setText(new_cn);
-                        cn.setSelection(editable.toString().length() + 1);
-                    } else if (editable.toString().length() == 7) {
+                    if (!mIsBackVisible) {
+                        //String new_cn = editable.toString().replaceAll("(\\d{4}(?!\\s))", "$1 ").trim();
+                        //cn.setText(new_cn);
+
+                        String source = editable.toString();
+                        int length=source.length();
+
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append(source);
+
+                        if(length > 0 && length %5 == 0)
+                        {
+                            if(isDelete)
+                                stringBuilder.deleteCharAt(length - 1);
+                            else
+                                stringBuilder.insert(length - 1," ");
+
+                            cn.setText(stringBuilder);
+                            cn.setSelection(cn.getText().length());
+
+                        }
+                    }
+
+                    if (editable.toString().length() == 7) {
                         String part = editable.toString().substring(editable.toString().lastIndexOf(" ") + 1);
                         if (banks_logo.containsKey(part)) {
                             ImageView bank_logo = findViewById(R.id.idBankLogo);
@@ -267,7 +288,11 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
                             if (genID.length() > 0) {
                                 postData.put("genID", genID);
                             }
+                            if (user_id.length() > 0 && !user_id.equals("_not_registered_")) {
+                                postData.put("user_id", user_id);
+                            }
 
+                            //Toast.makeText(slf, "Данные: " + postData.toString(), Toast.LENGTH_LONG).show();
                             sendDataToServer(LibActivity.this, server_url, postData, true);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -331,19 +356,20 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
     }
 
     public void flipCard(View view) {
-        if (!mIsBackVisible) {
-            mSetRightOut.setTarget(mCardFrontLayout);
-            mSetLeftIn.setTarget(mCardBackLayout);
-            mSetRightOut.start();
-            mSetLeftIn.start();
-            mIsBackVisible = true;
-        } else {
-            isCardEntered = true;
-            mSetRightOut.setTarget(mCardBackLayout);
-            mSetLeftIn.setTarget(mCardFrontLayout);
-            mSetRightOut.start();
-            mSetLeftIn.start();
-            mIsBackVisible = false;
+        if (isCardListLoaded) {
+            if (!mIsBackVisible) {
+                mSetRightOut.setTarget(mCardFrontLayout);
+                mSetLeftIn.setTarget(mCardBackLayout);
+                mSetRightOut.start();
+                mSetLeftIn.start();
+                mIsBackVisible = true;
+            } else {
+                mSetRightOut.setTarget(mCardBackLayout);
+                mSetLeftIn.setTarget(mCardFrontLayout);
+                mSetRightOut.start();
+                mSetLeftIn.start();
+                mIsBackVisible = false;
+            }
         }
     }
 
@@ -352,8 +378,8 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
         String[] resp = output.split(":{3}");
         switch (resp[0]) {
             case "cardList":
+                genID = resp[3];
                 if (!resp[2].equals("emp")) {
-                    genID = resp[3];
                     resp[2] = "Номер карты###" + resp[2];
                     String[] cards = resp[2].split("#{3}");
                     final Spinner spinner = findViewById(R.id.spinner2);
@@ -371,8 +397,6 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
 
                                 EditText ce = findViewById(R.id.card_exp);
                                 ce.setText(selected_card_parts[1]);
-
-                                isCardEntered = false;
                             }
                         }
 
@@ -381,6 +405,7 @@ public class LibActivity extends AppCompatActivity implements AsyncResponse, Dat
 
                         }
                     });
+                    isCardListLoaded = true;
                     flipCard(findViewById(R.id.mainWnd));
                 }
                 break;
